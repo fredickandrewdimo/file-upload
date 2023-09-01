@@ -29,6 +29,20 @@ function DisplayFiles() {
     window.URL.revokeObjectURL(url);
   };
 
+  const handleView = (file) => {
+    const blob = new Blob([new Uint8Array(file.data.data)], {
+      type: "application/pdf", // Set the appropriate content type
+    });
+
+    const url = window.URL.createObjectURL(blob);
+
+    // Open the file in a new tab
+    window.open(url, "_blank");
+
+    // Clean up
+    window.URL.revokeObjectURL(url);
+  };
+
   return (
     <div>
       <h2>List of Files</h2>
@@ -43,6 +57,9 @@ function DisplayFiles() {
             </div>
             <div>
               <button onClick={() => handleDownload(file)}>Download</button>
+            </div>
+            <div>
+              <button onClick={() => handleView(file)}>View</button>
             </div>
           </li>
         ))}
