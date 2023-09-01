@@ -1,20 +1,17 @@
+// Import required libraries and modules
 const express = require("express");
 const mongoose = require("mongoose");
 const multer = require("multer");
+
+// Create an Express application
 const app = express();
-const port = 3000; // or your desired port
+const port = 3000;
 
-// cors
+// Configure Cross-Origin Resource Sharing (CORS)
 const cors = require("cors");
+app.use(cors());
 
-// middleware
-app.use(
-  cors({
-    origin: "http://localhost:5173", // Adjust this to the correct origin
-  })
-);
-
-// Create a mongoose model for your PDF documents
+// Define a Mongoose model for PDF documents
 const PdfModel = mongoose.model("Pdf", {
   title: String,
   author: String,
@@ -25,14 +22,16 @@ const PdfModel = mongoose.model("Pdf", {
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-// API endpoint for uploading a PDF
+// Define an API endpoint for uploading a PDF
 app.post("/upload", upload.single("pdf"), async (req, res) => {
   try {
+    // Check if a file was provided in the request
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded." });
     }
 
-    const { title, author } = req.body; // Extract title and author from the request body
+    // Extract title and author from the request body
+    const { title, author } = req.body;
 
     // Create a new PDF document in MongoDB with title, author, and data
     const pdf = new PdfModel({
@@ -42,19 +41,25 @@ app.post("/upload", upload.single("pdf"), async (req, res) => {
     });
     await pdf.save();
 
+    // Respond with a success message
     return res.status(201).json({ message: "PDF uploaded successfully." });
   } catch (error) {
+    // Handle errors and respond with an error message
     console.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-// Add this route to your backend code to retrieve PDFs
+// Define an API endpoint to retrieve PDFs
 app.get("/pdfs", async (req, res) => {
   try {
-    const pdfs = await PdfModel.find(); // Fetch all documents from the 'Pdf' collection
+    // Fetch all PDF documents from the 'Pdf' collection
+    const pdfs = await PdfModel.find();
+
+    // Respond with the PDF documents
     return res.status(200).json(pdfs);
   } catch (error) {
+    // Handle errors and respond with an error message
     console.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
@@ -68,10 +73,12 @@ mongoose.connect("mongodb://localhost:27017/uploads", {
 
 const db = mongoose.connection;
 
+// Handle MongoDB connection errors
 db.on("error", (err) => {
   console.error("MongoDB connection error:", err);
 });
 
+// Once the MongoDB connection is open, start the Express server
 db.once("open", () => {
   console.log("MongoDB connected successfully.");
 
