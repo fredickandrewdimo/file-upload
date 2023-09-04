@@ -10,7 +10,7 @@ function DisplayFiles() {
   // Use useEffect to fetch the list of files from the backend when the component mounts
   useEffect(() => {
     // Fetch the list of files from your backend
-    axios.get("http://localhost:3000/pdfs").then((response) => {
+    axios.get("http://localhost:3000/api/pdf").then((response) => {
       setFiles(response.data);
     });
   }, []);

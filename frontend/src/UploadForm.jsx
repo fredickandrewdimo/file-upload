@@ -9,14 +9,10 @@ function UploadForm() {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
 
-  // Handle file input change and update selectedFile state
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
-  };
-
   // Handle file upload when the "Upload" button is clicked
-  const handleFileUpload = async () => {
+  const handleFileUpload = async (e) => {
     try {
+      e.preventDefault();
       // Check if a file is selected
       if (!selectedFile) {
         alert("Please select a file to upload.");
@@ -29,7 +25,7 @@ function UploadForm() {
       formData.append("pdf", selectedFile);
 
       // Send a POST request to upload the file to the server
-      await axios.post("http://localhost:3000/upload", formData, {
+      await axios.post("http://localhost:3000/api/pdf", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -49,7 +45,7 @@ function UploadForm() {
   return (
     <>
       {/* Render the file upload form */}
-      <div>
+      <form onSubmit={handleFileUpload}>
         <h2>Upload a PDF</h2>
         <div className="">
           <p>Title</p>
@@ -60,10 +56,14 @@ function UploadForm() {
           <input type="text" onChange={(e) => setAuthor(e.target.value)} />
         </div>
         {/* File input field for selecting a PDF file */}
-        <input type="file" accept=".pdf" onChange={handleFileChange} />
+        <input
+          type="file"
+          accept=".pdf"
+          onChange={(e) => setSelectedFile(e.target.files[0])}
+        />
         {/* Button to trigger the file upload */}
-        <button onClick={handleFileUpload}>Upload</button>
-      </div>
+        <button type="submit">Upload</button>
+      </form>
     </>
   );
 }
