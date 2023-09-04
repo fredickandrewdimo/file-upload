@@ -37,6 +37,8 @@ function UploadForm() {
 
       // Display a success alert when the upload is successful
       alert("File uploaded successfully.");
+
+      console.log(formData);
     } catch (error) {
       // Handle errors and display an error alert
       console.error("Error uploading file:", error);
